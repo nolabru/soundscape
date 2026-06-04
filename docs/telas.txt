@@ -1,0 +1,37 @@
+1. Mixer Principal 
+​Esta é a tela de entrada do aplicativo, estruturada para devolver o controle do ambiente acústico à pessoa neurodivergente.
+​Biblioteca Customizável e Equalização: O usuário tem acesso a controles deslizantes (sliders) para misturar diferentes sons simultaneamente, combinando paisagens sonoras da natureza (como chuva ou vento) com ruídos estruturados (branco, rosa e marrom).  
+​Importação de Áudio: Existe a capacidade de o usuário importar seus próprios áudios para dentro da plataforma, garantindo uma customização radical e devolvendo o senso de agência.  
+
+​Botão "Meu Refúgio": Após o usuário criar a mistura sonora exata que lhe traz conforto (calibrando graves e agudos conforme sua tolerância), ele salva essa configuração como o seu padrão de emergência.  
+
+
+​2. Sistema Guardião
+​O Guardião atua essencialmente como uma função executiva auxiliar e externa, detectando o perigo antes que a crise se instale de forma abrupta.  
+​Monitoramento Ambiental: Mediante permissão de privacidade, o microfone realiza amostragens contínuas do ambiente em segundo plano para identificar limiares de decibéis considerados de risco. O processamento é todo local, focado em medir o volume, sem gravar vozes.  
+​Intervenção com Fade-in: Ao detectar um pico sonoro sustentado, o sistema sugere a ativação automática da mixagem "Meu Refúgio". Para evitar iatrogenia (um susto causado pela própria ferramenta), o áudio entra com um ganho acústico progressivo, um fade-in suave.  
+
+​3. Botão de Pânico e Ancoragem Visual 
+​Desenvolvido para atuar no auge da desregulação sensorial, cortando o caminho para o meltdown.  
+​Acesso Imediato: Funciona como um widget na tela inicial do celular, permitindo a ativação imediata da regulação sonora com o menor atrito motor possível.  
+​Prioridade de Sistema: Ao ser acionado, o aplicativo pausa outras mídias do aparelho e assume o controle do áudio.
+​Ancoragem Visual: A tela adota um visual minimalista e escuro, exibindo uma animação de respiração geométrica (como um círculo que infla e desincha) para guiar o ritmo respiratório e auxiliar na regulação multissensorial.
+​Rede de Apoio: Nos bastidores, o aplicativo pode enviar um SMS automático contendo a localização do usuário para um contato de emergência (como um familiar), sinalizando a necessidade de suporte externo.
+
+​4. Avaliação Ecológica Momentânea 
+​Logo após o usuário sinalizar que a crise passou, o aplicativo apresenta uma tela de coleta rápida de dados, substituindo o relato retrospectivo e enviesado de consultório.  
+​Interface de Baixa Carga: O paciente registra a intensidade emocional utilizando escalas visuais e emojis grandes.  
+​Mapeamento de Contexto: Botões de múltipla escolha permitem marcar rapidamente a duração, os gatilhos ambientais identificados (ex: barulhos ou luzes) e o local onde o evento ocorreu (ex: transporte público, escola, shopping).  
+
+​5. Diário Terapêutico e Exportação 
+​A inteligência do aplicativo que converte os dados do dia a dia em evidências empíricas sólidas para o refinamento do Plano de Desenvolvimento Individual (PDI).  
+​Dashboard Visual: Uma aba com calendário e gráficos que mostram a recorrência das crises, a evolução do humor ao longo do tempo e o destaque para os "Locais de Risco" (ambientes que mais desencadearam desregulação).  
+​Exportação em PDF: Um botão que compila todas essas estatísticas visuais em um documento PDF estruturado e criptografado, que o usuário pode compartilhar diretamente com seu psicólogo ou terapeuta.
+
+primeira vez que entra no app
+Fluxo de Integração e Triagem Sensorial (Onboarding)
+​Esta é a primeira experiência do usuário ao abrir o TEA SoundScapes pela primeira vez, funcionando metodologicamente como uma "anamnese digital breve". O objetivo é calibrar o sistema para as necessidades individuais antes mesmo do primeiro uso.  
+​Questionários "Sobre Você" e "Necessidades": Um formulário estruturado e rápido onde o usuário indica como gosta de ser chamado e já mapeia previamente os seus locais mais frequentes de crises, como escola ou transporte público.  
+​Mapeamento da Rede de Apoio: Uma etapa dedicada a cadastrar os contatos de emergência (como familiares) e informar se o usuário já possui acompanhamento com um psicólogo.  
+​Permissões de Privacidade: O momento em que o aplicativo explica de forma transparente como a função Guardião funciona e solicita as permissões necessárias para acessar o microfone do celular e habilitar o widget de acesso rápido para as crises.  
+​Teste Auditivo Guiado ("Seu Refúgio"): A etapa mais importante da triagem. O aplicativo apresenta pequenas amostras de ruídos contínuos e paisagens sonoras (Som A, Som B, Som C) e pede para o usuário identificar qual frequência é a mais confortável. Isso garante que o estímulo que será acionado futuramente em urgências seja biologicamente palatável para aquele sistema nervoso específico, evitando o risco de piorar a crise (iatrogenia sonora).
