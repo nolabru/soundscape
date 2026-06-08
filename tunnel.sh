@@ -24,7 +24,9 @@ npm install @expo/ngrok@^4.1.0 --legacy-peer-deps --silent 2>/dev/null || true
 NGROK_BIN=$(find "$PROJECT_DIR/node_modules" -path "*ngrok-bin-linux-x64/ngrok" 2>/dev/null | head -1)
 if [ -n "$NGROK_BIN" ]; then
   echo "==> Substituindo binário ngrok v2 → v3..."
-  cp "$NGROK_V3" "$NGROK_BIN"
+  pkill -f ngrok 2>/dev/null || true
+  sleep 1
+  cp "$NGROK_V3" "$NGROK_BIN" || true
 fi
 
 # Patch client.js: remover campos incompatíveis com ngrok v3

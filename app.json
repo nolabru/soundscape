@@ -10,6 +10,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.nolabru.soundscape",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -19,6 +20,15 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "9c2d8319-087d-4f9b-95c5-0dd645f8c832"
+      }
+    },
+    "owner": "nolabrui",
+    "plugins": [
+      "expo-font"
+    ]
   }
 }
