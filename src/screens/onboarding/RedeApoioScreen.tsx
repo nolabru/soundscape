@@ -7,12 +7,19 @@ import { colors, fonts } from '../../theme';
 export default function RedeApoioScreen({ navigation, route }: any) {
   const [nome, setNome] = useState('');
   const [tel, setTel] = useState('');
+  const [avisarEmCrise, setAvisarEmCrise] = useState(true);
   const [temPsicologo, setTemPsicologo] = useState(false);
   const prev = route?.params?.onboardingData ?? {};
 
   function next() {
     navigation.navigate('Permissoes', {
-      onboardingData: { ...prev, contato_emergencia_nome: nome, contato_emergencia_tel: tel, tem_psicologo: temPsicologo },
+      onboardingData: {
+        ...prev,
+        contato_emergencia_nome: nome,
+        contato_emergencia_tel: tel,
+        avisar_em_crise: avisarEmCrise,
+        tem_psicologo: temPsicologo,
+      },
     });
   }
 
@@ -30,6 +37,11 @@ export default function RedeApoioScreen({ navigation, route }: any) {
           <TextInput style={s.input} value={tel} onChangeText={setTel} placeholder="+55 11 99999-9999" keyboardType="phone-pad" placeholderTextColor="#9AA8BD" />
 
           <View style={s.switchRow}>
+            <Text style={s.switchLabel}>Avisar esta pessoa quando eu estiver em crise</Text>
+            <Switch value={avisarEmCrise} onValueChange={setAvisarEmCrise} trackColor={{ true: colors.azulClaro, false: '#D5DEEA' }} thumbColor={colors.branco} />
+          </View>
+
+          <View style={s.switchRow}>
             <Text style={s.switchLabel}>Já tenho acompanhamento psicológico</Text>
             <Switch value={temPsicologo} onValueChange={setTemPsicologo} trackColor={{ true: colors.azulClaro, false: '#D5DEEA' }} thumbColor={colors.branco} />
           </View>
@@ -37,9 +49,6 @@ export default function RedeApoioScreen({ navigation, route }: any) {
 
         <View style={s.footer}>
           <PrimaryButton label="Continuar" onPress={next} />
-          <TouchableOpacity onPress={next} style={s.skip}>
-            <Text style={s.skipText}>Pular por agora</Text>
-          </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
     </OnboardingLayout>
@@ -59,7 +68,7 @@ const s = StyleSheet.create({
   },
   switchRow: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    marginTop: 28, backgroundColor: colors.branco, borderRadius: 14, padding: 16,
+    marginTop: 14, backgroundColor: colors.branco, borderRadius: 14, padding: 16,
     borderWidth: 1, borderColor: '#E2E8F2',
   },
   switchLabel: { fontFamily: fonts.medium, fontSize: 14, color: colors.textoPrimario, flex: 1, marginRight: 12 },

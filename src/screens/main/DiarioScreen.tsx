@@ -1,47 +1,29 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, Alert } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { Trash2, Plus, NotebookPen } from 'lucide-react-native';
 import { supabase } from '../../lib/supabase';
-
-const HUMORES = ['😢', '😔', '😐', '🙂', '😊'];
-const LOCAIS = ['Casa', 'Escola', 'Transporte', 'Trabalho', 'Shopping', 'Outro'];
-const HORARIOS = ['Madrugada', 'Manhã', 'Tarde', 'Noite'];
-
-function hoje() { return new Date().toISOString().split('T')[0]; }
+import { colors, fonts } from '../../theme';
+import { humorIcon, humorCor } from '../../humor';
+import Skeleton from '../../components/Skeleton';
 
 export default function DiarioScreen() {
+  const navigation = useNavigation<any>();
   const [entries, setEntries] = useState<any[]>([]);
-  const [humor, setHumor] = useState<number | null>(null);
-  const [crises, setCrises] = useState('0');
-  const [duracao, setDuracao] = useState('0');
-  const [horario, setHorario] = useState('');
-  const [local, setLocal] = useState('');
-  const [obs, setObs] = useState('');
+  const [carregando, setCarregando] = useState(true);
 
   useFocusEffect(useCallback(() => { carregar(); }, []));
 
   async function carregar() {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    const { data } = await supabase.from('diary_entries').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(30);
+    if (!user) { setCarregando(false); return; }
+    const { data } = await supabase.from('diary_entries').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(50);
     setEntries(data ?? []);
+    setCarregando(false);
   }
 
-  async function salvar() {
-    if (humor === null) { Alert.alert('Selecione seu humor'); return; }
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    const { error } = await supabase.from('diary_entries').insert({
-      user_id: user.id, date: hoje(), humor: humor + 1,
-      crises: parseInt(crises) || 0, duracao_minutos: parseInt(duracao) || 0,
-      horario, local, observacoes: obs,
-    });
-    if (error) { Alert.alert('Erro ao salvar'); return; }
-    setHumor(null); setCrises('0'); setDuracao('0'); setHorario(''); setLocal(''); setObs('');
-    carregar();
-  }
-
-  async function excluir(id: string) {
+  function excluir(id: string) {
     Alert.alert('Excluir', 'Remover esta entrada?', [
       { text: 'Cancelar' },
       { text: 'Excluir', style: 'destructive', onPress: async () => {
@@ -51,88 +33,106 @@ export default function DiarioScreen() {
     ]);
   }
 
+  const vazio = entries.length === 0;
+
   return (
-    <ScrollView style={s.screen}>
-      <Text style={s.title}>Diário de Humor</Text>
-      <View style={s.card}>
-        <Text style={s.cardTitle}>Como foi hoje?</Text>
-        <Text style={s.label}>Humor</Text>
-        <View style={s.humorRow}>
-          {HUMORES.map((e, i) => (
-            <TouchableOpacity key={i} style={[s.humorBtn, humor === i && s.humorBtnAtivo]} onPress={() => setHumor(i)}>
-              <Text style={s.humorEmoji}>{e}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-        <Text style={s.label}>Crises hoje</Text>
-        <TextInput style={s.input} value={crises} onChangeText={setCrises} keyboardType="number-pad" />
-        <Text style={s.label}>Duração total (min)</Text>
-        <TextInput style={s.input} value={duracao} onChangeText={setDuracao} keyboardType="number-pad" />
-        <Text style={s.label}>Horário principal</Text>
-        <View style={s.chipRow}>
-          {HORARIOS.map(h => (
-            <TouchableOpacity key={h} style={[s.chip, horario === h && s.chipAtivo]} onPress={() => setHorario(h === horario ? '' : h)}>
-              <Text style={[s.chipText, horario === h && s.chipTextoAtivo]}>{h}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-        <Text style={s.label}>Local</Text>
-        <View style={s.chipRow}>
-          {LOCAIS.map(l => (
-            <TouchableOpacity key={l} style={[s.chip, local === l && s.chipAtivo]} onPress={() => setLocal(l === local ? '' : l)}>
-              <Text style={[s.chipText, local === l && s.chipTextoAtivo]}>{l}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-        <Text style={s.label}>Observações</Text>
-        <TextInput style={[s.input, s.textarea]} value={obs} onChangeText={setObs} placeholder="Como foi seu dia?" multiline />
-        <TouchableOpacity style={s.btn} onPress={salvar}>
-          <Text style={s.btnText}>💾 Salvar</Text>
-        </TouchableOpacity>
+    <SafeAreaView style={s.screen} edges={['top']}>
+      <View style={s.header}>
+        <Text style={s.title}>Diário</Text>
+        <Text style={s.subtitle}>Seu histórico de bem-estar.</Text>
       </View>
 
-      <Text style={s.section}>Histórico</Text>
-      {entries.map(e => (
-        <View key={e.id} style={s.entry}>
-          <View style={s.entryHeader}>
-            <Text style={s.entryDate}>{HUMORES[e.humor - 1]} {e.date}</Text>
-            <TouchableOpacity onPress={() => excluir(e.id)}>
-              <Text style={s.excluir}>🗑</Text>
-            </TouchableOpacity>
-          </View>
-          <Text style={s.entryInfo}>Crises: {e.crises} · {e.duracao_minutos} min{e.local ? ` · ${e.local}` : ''}</Text>
-          {e.observacoes ? <Text style={s.entryObs}>{e.observacoes}</Text> : null}
+      {carregando ? (
+        <View style={s.scroll}>
+          {[0, 1, 2, 3].map(i => (
+            <View key={i} style={s.skelRow}>
+              <Skeleton width={44} height={44} radius={14} />
+              <View style={s.skelInfo}>
+                <Skeleton width={90} height={13} radius={6} style={{ marginBottom: 8 }} />
+                <Skeleton width={160} height={11} radius={6} />
+              </View>
+            </View>
+          ))}
         </View>
-      ))}
-      <View style={{ height: 32 }} />
-    </ScrollView>
+      ) : vazio ? (
+        <View style={s.empty}>
+          <View style={s.emptyIcon}>
+            <NotebookPen size={32} color={colors.azulClaro} />
+          </View>
+          <Text style={s.emptyTitle}>Nenhum registro ainda</Text>
+          <Text style={s.emptyText}>Comece registrando como você se sente hoje.</Text>
+          <TouchableOpacity style={s.emptyBtn} onPress={() => navigation.navigate('NovoRegistro')} activeOpacity={0.85}>
+            <Plus size={18} color={colors.branco} />
+            <Text style={s.emptyBtnText}>Adicionar registro</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <>
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.scroll}>
+            {entries.map(e => {
+              const Icon = humorIcon(e.humor);
+              return (
+                <View key={e.id} style={s.entry}>
+                  <View style={[s.entryIcon, { backgroundColor: humorCor(e.humor) + '22' }]}>
+                    <Icon size={22} color={humorCor(e.humor)} />
+                  </View>
+                  <View style={s.entryInfo}>
+                    <Text style={s.entryDate}>{e.date}</Text>
+                    <Text style={s.entryMeta}>
+                      {e.crises} crise{e.crises === 1 ? '' : 's'} · {e.duracao_minutos} min{e.local ? ` · ${e.local}` : ''}
+                    </Text>
+                    {e.observacoes ? <Text style={s.entryObs} numberOfLines={2}>{e.observacoes}</Text> : null}
+                  </View>
+                  <TouchableOpacity onPress={() => excluir(e.id)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                    <Trash2 size={18} color={colors.textoSecundario} />
+                  </TouchableOpacity>
+                </View>
+              );
+            })}
+          </ScrollView>
+
+          <TouchableOpacity style={s.fab} onPress={() => navigation.navigate('NovoRegistro')} activeOpacity={0.85}>
+            <Plus size={26} color={colors.branco} />
+          </TouchableOpacity>
+        </>
+      )}
+    </SafeAreaView>
   );
 }
 
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#fff' },
-  title: { fontSize: 24, fontWeight: 'bold', padding: 20, paddingTop: 56 },
-  card: { margin: 16, padding: 16, backgroundColor: '#F8F8FF', borderRadius: 14, borderWidth: 1, borderColor: '#e0e0e0' },
-  cardTitle: { fontSize: 18, fontWeight: '700', color: '#4F46E5', marginBottom: 12 },
-  label: { fontSize: 13, fontWeight: '600', color: '#444', marginBottom: 8, marginTop: 12 },
-  humorRow: { flexDirection: 'row', gap: 8 },
-  humorBtn: { flex: 1, alignItems: 'center', padding: 10, borderRadius: 10, borderWidth: 1, borderColor: '#e0e0e0' },
-  humorBtnAtivo: { borderColor: '#4F46E5', backgroundColor: '#EDEDFF' },
-  humorEmoji: { fontSize: 24 },
-  input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 10, padding: 12, fontSize: 15, backgroundColor: '#fff' },
-  textarea: { height: 80, textAlignVertical: 'top' },
-  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  chip: { paddingVertical: 6, paddingHorizontal: 12, borderRadius: 20, borderWidth: 1, borderColor: '#ddd', backgroundColor: '#fff' },
-  chipAtivo: { borderColor: '#4F46E5', backgroundColor: '#EDEDFF' },
-  chipText: { fontSize: 13, color: '#555' },
-  chipTextoAtivo: { color: '#4F46E5', fontWeight: '600' },
-  btn: { backgroundColor: '#4F46E5', padding: 14, borderRadius: 12, alignItems: 'center', marginTop: 16 },
-  btnText: { color: '#fff', fontWeight: '700', fontSize: 15 },
-  section: { fontSize: 16, fontWeight: '700', paddingHorizontal: 20, marginTop: 8, marginBottom: 8 },
-  entry: { marginHorizontal: 16, marginBottom: 10, padding: 14, backgroundColor: '#F9F9F9', borderRadius: 12, borderLeftWidth: 3, borderLeftColor: '#4F46E5' },
-  entryHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 },
-  entryDate: { fontWeight: '600', fontSize: 15 },
-  excluir: { fontSize: 16 },
-  entryInfo: { fontSize: 13, color: '#666' },
-  entryObs: { fontSize: 13, color: '#444', marginTop: 4, fontStyle: 'italic' },
+  screen: { flex: 1, backgroundColor: colors.fundo },
+  header: { paddingHorizontal: 20, paddingTop: 12, marginBottom: 14 },
+  title: { fontFamily: fonts.bold, fontSize: 26, color: colors.textoPrimario },
+  subtitle: { fontFamily: fonts.regular, fontSize: 14, color: colors.textoSecundario, marginTop: 4 },
+
+  scroll: { paddingHorizontal: 20, paddingBottom: 130 },
+  skelRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.card, borderRadius: 18, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: colors.borda },
+  skelInfo: { flex: 1, marginLeft: 14 },
+  entry: {
+    flexDirection: 'row', alignItems: 'center', backgroundColor: colors.card,
+    borderRadius: 18, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: colors.borda,
+  },
+  entryIcon: { width: 44, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center', marginRight: 14 },
+  entryInfo: { flex: 1 },
+  entryDate: { fontFamily: fonts.semibold, fontSize: 14, color: colors.textoPrimario },
+  entryMeta: { fontFamily: fonts.regular, fontSize: 12, color: colors.textoSecundario, marginTop: 2 },
+  entryObs: { fontFamily: fonts.regular, fontSize: 12, color: colors.textoSecundario, marginTop: 5, fontStyle: 'italic' },
+
+  fab: {
+    position: 'absolute', right: 24, bottom: 110,
+    width: 58, height: 58, borderRadius: 29, backgroundColor: colors.azulEscuro,
+    alignItems: 'center', justifyContent: 'center',
+    shadowColor: colors.azulEscuro, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.3, shadowRadius: 12, elevation: 8,
+  },
+
+  empty: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 40, paddingBottom: 80 },
+  emptyIcon: { width: 72, height: 72, borderRadius: 36, backgroundColor: colors.tint, alignItems: 'center', justifyContent: 'center', marginBottom: 20 },
+  emptyTitle: { fontFamily: fonts.bold, fontSize: 18, color: colors.textoPrimario, marginBottom: 8 },
+  emptyText: { fontFamily: fonts.regular, fontSize: 14, color: colors.textoSecundario, textAlign: 'center', lineHeight: 21, marginBottom: 24 },
+  emptyBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 8,
+    backgroundColor: colors.azulEscuro, paddingVertical: 15, paddingHorizontal: 28, borderRadius: 28,
+  },
+  emptyBtnText: { fontFamily: fonts.semibold, fontSize: 15, color: colors.branco },
 });

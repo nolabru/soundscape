@@ -1,132 +1,144 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
-import { Audio } from 'expo-av';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { Play, BookmarkCheck } from 'lucide-react-native';
 import { supabase } from '../../lib/supabase';
+import { colors, fonts } from '../../theme';
+import { SONS_NATUREZA, RUIDOS, TODOS_SONS, getSom } from '../../sons';
+import Skeleton from '../../components/Skeleton';
 
-const SONS_NATUREZA = [
-  { id: 'chuva', label: 'Chuva Suave', emoji: '🌧️' },
-  { id: 'ondas', label: 'Ondas do Mar', emoji: '🌊' },
-  { id: 'floresta', label: 'Floresta', emoji: '🌲' },
-  { id: 'passaros', label: 'Pássaros', emoji: '🐦' },
-  { id: 'vento', label: 'Vento Suave', emoji: '💨' },
-  { id: 'lareira', label: 'Lareira', emoji: '🔥' },
+const CATEGORIAS = [
+  { id: 'todos', label: 'Todos' },
+  { id: 'natureza', label: 'Natureza' },
+  { id: 'ruidos', label: 'Ruídos' },
 ];
-
-const RUIDOS = [
-  { id: 'branco', label: 'Ruído Branco', emoji: '📻' },
-  { id: 'rosa', label: 'Ruído Rosa', emoji: '🎵' },
-  { id: 'marrom', label: 'Ruído Marrom', emoji: '🎶' },
-  { id: 'ventilador', label: 'Ventilador', emoji: '🌀' },
-];
-
-const TODOS = [...SONS_NATUREZA, ...RUIDOS];
 
 export default function MixerScreen() {
-  const [ativo, setAtivo] = useState<string | null>(null);
-  const [somRefugio, setSomRefugio] = useState<string | null>(null);
-  const soundRef = useRef<Audio.Sound | null>(null);
   const navigation = useNavigation<any>();
+  const [somRefugio, setSomRefugio] = useState<string | null>(null);
+  const [nome, setNome] = useState('');
+  const [categoria, setCategoria] = useState('todos');
+  const [carregando, setCarregando] = useState(true);
 
-  useEffect(() => {
-    Audio.setAudioModeAsync({ playsInSilentModeIOS: true, staysActiveInBackground: true }).catch(() => {});
-    carregarRefugio();
-    return () => { soundRef.current?.unloadAsync(); };
-  }, []);
+  useFocusEffect(useCallback(() => { carregar(); }, []));
 
-  async function carregarRefugio() {
+  async function carregar() {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    const { data } = await supabase.from('profiles').select('som_refugio').eq('id', user.id).single();
+    if (!user) { setCarregando(false); return; }
+    const { data } = await supabase.from('profiles').select('som_refugio, nome').eq('id', user.id).single();
     setSomRefugio(data?.som_refugio ?? null);
+    setNome(data?.nome ?? '');
+    setCarregando(false);
   }
 
-  async function tocar(id: string) {
-    await soundRef.current?.unloadAsync();
-    soundRef.current = null;
-    setAtivo(ativo === id ? null : id);
+  function abrirPlayer(somId: string) {
+    navigation.navigate('Player', { somId });
   }
 
-  async function parar() {
-    await soundRef.current?.unloadAsync();
-    soundRef.current = null;
-    setAtivo(null);
-  }
-
-  async function salvarRefugio() {
-    if (!ativo) return;
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    await supabase.from('profiles').upsert({ id: user.id, som_refugio: ativo });
-    setSomRefugio(ativo);
-    Alert.alert('Salvo!', `"${TODOS.find(s => s.id === ativo)?.label}" é agora seu Refúgio Sonoro.`);
-  }
+  const lista = categoria === 'natureza' ? SONS_NATUREZA : categoria === 'ruidos' ? RUIDOS : TODOS_SONS;
+  const refugio = getSom(somRefugio);
 
   return (
-    <ScrollView style={s.screen}>
-      <View style={s.header}>
-        <Text style={s.title}>Sons Relaxantes</Text>
-        <TouchableOpacity style={s.panicBtn} onPress={() => navigation.navigate('Panico')}>
-          <Text style={s.panicBtnText}>🆘</Text>
-        </TouchableOpacity>
-      </View>
-
-      <Text style={s.section}>Sons da Natureza</Text>
-      <View style={s.grid}>
-        {SONS_NATUREZA.map(som => (
-          <TouchableOpacity key={som.id} style={[s.card, ativo === som.id && s.cardAtivo]} onPress={() => tocar(som.id)}>
-            <Text style={s.emoji}>{som.emoji}</Text>
-            <Text style={[s.cardLabel, ativo === som.id && s.cardLabelAtivo]}>{som.label}</Text>
-            {somRefugio === som.id && <Text style={s.refugioTag}>⭐</Text>}
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      <Text style={s.section}>Ruídos Calmantes</Text>
-      <View style={s.grid}>
-        {RUIDOS.map(som => (
-          <TouchableOpacity key={som.id} style={[s.card, ativo === som.id && s.cardAtivo]} onPress={() => tocar(som.id)}>
-            <Text style={s.emoji}>{som.emoji}</Text>
-            <Text style={[s.cardLabel, ativo === som.id && s.cardLabelAtivo]}>{som.label}</Text>
-            {somRefugio === som.id && <Text style={s.refugioTag}>⭐</Text>}
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      {ativo && (
-        <View style={s.player}>
-          <Text style={s.playerLabel}>▶ {TODOS.find(s => s.id === ativo)?.label}</Text>
-          <TouchableOpacity style={s.stopBtn} onPress={parar}>
-            <Text style={s.stopBtnText}>⏹ Parar</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={s.refugioSaveBtn} onPress={salvarRefugio}>
-            <Text style={s.refugioSaveBtnText}>⭐ Salvar como Meu Refúgio</Text>
-          </TouchableOpacity>
+    <SafeAreaView style={s.screen} edges={['top']}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.scroll}>
+        <View style={s.header}>
+          {carregando ? (
+            <Skeleton width={120} height={14} radius={7} style={{ marginBottom: 10 }} />
+          ) : (
+            !!nome && <Text style={s.greeting}>Olá, {nome}</Text>
+          )}
+          <Text style={s.title}>O que você quer{'\n'}ouvir agora?</Text>
         </View>
-      )}
-      <View style={{ height: 32 }} />
-    </ScrollView>
+
+        {carregando ? (
+          <Skeleton height={82} radius={20} style={{ marginBottom: 22 }} />
+        ) : refugio ? (
+          <TouchableOpacity style={s.featured} onPress={() => abrirPlayer(refugio.id)} activeOpacity={0.9}>
+            <View style={s.featuredIcon}>
+              <refugio.Icon size={26} color={colors.branco} />
+            </View>
+            <View style={s.featuredInfo}>
+              <Text style={s.featuredTag}>MEU REFÚGIO</Text>
+              <Text style={s.featuredLabel}>{refugio.label}</Text>
+            </View>
+            <View style={s.featuredPlay}>
+              <Play size={20} color={colors.azulEscuro} fill={colors.azulEscuro} />
+            </View>
+          </TouchableOpacity>
+        ) : null}
+
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={s.chipsRow} contentContainerStyle={s.chipsContent}>
+          {CATEGORIAS.map(c => {
+            const sel = categoria === c.id;
+            return (
+              <TouchableOpacity key={c.id} style={[s.chip, sel && s.chipAtivo]} onPress={() => setCategoria(c.id)} activeOpacity={0.8}>
+                <Text style={[s.chipText, sel && s.chipTextoAtivo]}>{c.label}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+
+        <View style={s.grid}>
+          {lista.map(som => {
+            const ehRefugio = somRefugio === som.id;
+            return (
+              <TouchableOpacity key={som.id} style={s.card} onPress={() => abrirPlayer(som.id)} activeOpacity={0.85}>
+                <View style={s.cardIcon}>
+                  <som.Icon size={24} color={colors.azulClaro} />
+                </View>
+                {ehRefugio ? <BookmarkCheck size={16} color={colors.azulClaro} style={s.cardMark} /> : null}
+                <Text style={s.cardLabel}>{som.label}</Text>
+                <Text style={s.cardState}>Tocar</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#fff' },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 20, paddingTop: 56 },
-  title: { fontSize: 24, fontWeight: 'bold' },
-  panicBtn: { backgroundColor: '#DC2626', width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'center' },
-  panicBtnText: { fontSize: 20 },
-  section: { fontSize: 15, fontWeight: '700', color: '#4F46E5', paddingHorizontal: 20, marginTop: 8, marginBottom: 10 },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 16, gap: 10, marginBottom: 8 },
-  card: { width: '47%', borderWidth: 1, borderColor: '#e5e5e5', borderRadius: 14, padding: 16, alignItems: 'center' },
-  cardAtivo: { borderColor: '#4F46E5', backgroundColor: '#F0F0FF' },
-  emoji: { fontSize: 30, marginBottom: 8 },
-  cardLabel: { fontSize: 13, textAlign: 'center', color: '#333' },
-  cardLabelAtivo: { color: '#4F46E5', fontWeight: '600' },
-  refugioTag: { fontSize: 12, marginTop: 4 },
-  player: { margin: 16, padding: 16, backgroundColor: '#F8F8FF', borderRadius: 14, borderWidth: 1, borderColor: '#e0e0e0', gap: 10 },
-  playerLabel: { fontSize: 15, fontWeight: '600' },
-  stopBtn: { backgroundColor: '#DC2626', padding: 12, borderRadius: 10, alignItems: 'center' },
-  stopBtnText: { color: '#fff', fontWeight: '600' },
-  refugioSaveBtn: { backgroundColor: '#F59E0B', padding: 12, borderRadius: 10, alignItems: 'center' },
-  refugioSaveBtnText: { color: '#fff', fontWeight: '600' },
+  screen: { flex: 1, backgroundColor: colors.fundo },
+  scroll: { paddingHorizontal: 20, paddingBottom: 130 },
+  header: { paddingTop: 12, marginBottom: 20 },
+  greeting: { fontFamily: fonts.medium, fontSize: 14, color: colors.textoSecundario, marginBottom: 6 },
+  title: { fontFamily: fonts.bold, fontSize: 26, color: colors.textoPrimario, lineHeight: 33 },
+
+  featured: {
+    flexDirection: 'row', alignItems: 'center', backgroundColor: colors.azulEscuro,
+    borderRadius: 20, padding: 16, marginBottom: 22,
+  },
+  featuredIcon: {
+    width: 50, height: 50, borderRadius: 16, backgroundColor: 'rgba(255,255,255,0.14)',
+    alignItems: 'center', justifyContent: 'center', marginRight: 14,
+  },
+  featuredInfo: { flex: 1 },
+  featuredTag: { fontFamily: fonts.semibold, fontSize: 10, color: colors.azulClaro, letterSpacing: 1, marginBottom: 4 },
+  featuredLabel: { fontFamily: fonts.bold, fontSize: 17, color: colors.branco },
+  featuredPlay: {
+    width: 44, height: 44, borderRadius: 22, backgroundColor: colors.branco,
+    alignItems: 'center', justifyContent: 'center',
+  },
+
+  chipsRow: { marginBottom: 18, marginHorizontal: -20 },
+  chipsContent: { paddingHorizontal: 20, gap: 10 },
+  chip: { paddingVertical: 9, paddingHorizontal: 18, borderRadius: 20, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.borda },
+  chipAtivo: { backgroundColor: colors.azulEscuro, borderColor: colors.azulEscuro },
+  chipText: { fontFamily: fonts.medium, fontSize: 13, color: colors.textoSecundario },
+  chipTextoAtivo: { color: colors.branco },
+
+  grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
+  card: {
+    width: '48%', backgroundColor: colors.card, borderRadius: 20, padding: 16, marginBottom: 14,
+    borderWidth: 1, borderColor: colors.borda,
+  },
+  cardIcon: {
+    width: 48, height: 48, borderRadius: 16, backgroundColor: colors.tint,
+    alignItems: 'center', justifyContent: 'center', marginBottom: 14,
+  },
+  cardMark: { position: 'absolute', top: 18, right: 16 },
+  cardLabel: { fontFamily: fonts.semibold, fontSize: 14, color: colors.textoPrimario },
+  cardState: { fontFamily: fonts.regular, fontSize: 12, color: colors.textoSecundario, marginTop: 2 },
 });

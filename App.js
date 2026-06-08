@@ -7,6 +7,7 @@ import {
   Montserrat_600SemiBold,
   Montserrat_700Bold,
 } from '@expo-google-fonts/montserrat';
+import { AppStateProvider } from './src/AppState';
 import Navigation from './src/navigation';
 
 export default function App() {
@@ -21,7 +22,9 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <Navigation />
+      <AppStateProvider>
+        <Navigation />
+      </AppStateProvider>
     </SafeAreaProvider>
   );
 }

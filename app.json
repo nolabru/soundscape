@@ -28,7 +28,15 @@
     },
     "owner": "nolabrui",
     "plugins": [
-      "expo-font"
+      "expo-font",
+      [
+        "expo-image-picker",
+        { "photosPermission": "Permita o acesso às fotos para definir seu avatar." }
+      ],
+      [
+        "expo-location",
+        { "locationWhenInUsePermission": "Usado para enviar sua localização ao contato de emergência durante uma crise." }
+      ]
     ]
   }
 }

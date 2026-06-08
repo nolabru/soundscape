@@ -15,6 +15,9 @@ import RedeApoioScreen from '../screens/onboarding/RedeApoioScreen';
 import PermissoesScreen from '../screens/onboarding/PermissoesScreen';
 import TesteRefugioScreen from '../screens/onboarding/TesteRefugioScreen';
 import MainTabs from './MainTabs';
+import NovoRegistroScreen from '../screens/main/NovoRegistroScreen';
+import PlayerScreen from '../screens/main/PlayerScreen';
+import GuardiaoScreen from '../screens/main/GuardiaoScreen';
 import PanicoScreen from '../screens/modals/PanicoScreen';
 import EMAScreen from '../screens/modals/EMAScreen';
 
@@ -79,6 +82,7 @@ export default function Navigation() {
             <Stack.Screen name="Necessidades" component={NecessidadesScreen} />
             <Stack.Screen name="RedeApoio" component={RedeApoioScreen} />
             <Stack.Screen name="Permissoes" component={PermissoesScreen} />
+            <Stack.Screen name="Guardiao" component={GuardiaoScreen} />
             <Stack.Screen name="TesteRefugio" component={TesteRefugioScreen} />
           </>
         ) : !onboardingDone ? (
@@ -87,13 +91,17 @@ export default function Navigation() {
             <Stack.Screen name="Necessidades" component={NecessidadesScreen} />
             <Stack.Screen name="RedeApoio" component={RedeApoioScreen} />
             <Stack.Screen name="Permissoes" component={PermissoesScreen} />
+            <Stack.Screen name="Guardiao" component={GuardiaoScreen} />
             <Stack.Screen name="TesteRefugio" component={TesteRefugioScreen} />
           </>
         ) : (
           <>
             <Stack.Screen name="Main" component={MainTabs} />
-            <Stack.Screen name="Panico" component={PanicoScreen} options={{ presentation: 'modal' }} />
-            <Stack.Screen name="EMA" component={EMAScreen} options={{ presentation: 'modal' }} />
+            <Stack.Screen name="Guardiao" component={GuardiaoScreen} options={{ presentation: 'fullScreenModal' }} />
+            <Stack.Screen name="Player" component={PlayerScreen} options={{ presentation: 'fullScreenModal' }} />
+            <Stack.Screen name="NovoRegistro" component={NovoRegistroScreen} options={{ presentation: 'fullScreenModal' }} />
+            <Stack.Screen name="Panico" component={PanicoScreen} options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />
+            <Stack.Screen name="EMA" component={EMAScreen} options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />
           </>
         )}
       </Stack.Navigator>

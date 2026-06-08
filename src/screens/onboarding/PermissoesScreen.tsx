@@ -13,7 +13,7 @@ export default function PermissoesScreen({ navigation, route }: any) {
   async function ativar() {
     try { await Audio.requestPermissionsAsync(); } catch (_) {}
     try { await Notifications.requestPermissionsAsync(); } catch (_) {}
-    navigation.navigate('TesteRefugio', { onboardingData: { ...prev, guardiao_ativo: true } });
+    navigation.navigate('Guardiao', { onboarding: true, onboardingData: { ...prev } });
   }
 
   function pular() {
