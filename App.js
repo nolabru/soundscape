@@ -1,5 +1,7 @@
 import 'react-native-gesture-handler';
+import { useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { Asset } from 'expo-asset';
 import {
   useFonts,
   Montserrat_400Regular,
@@ -8,6 +10,7 @@ import {
   Montserrat_700Bold,
 } from '@expo-google-fonts/montserrat';
 import { AppStateProvider } from './src/AppState';
+import { ThemeProvider } from './src/ThemeContext';
 import Navigation from './src/navigation';
 
 export default function App() {
@@ -17,14 +20,21 @@ export default function App() {
     Montserrat_600SemiBold,
     Montserrat_700Bold,
   });
+  const [assetsLoaded, setAssetsLoaded] = useState(false);
 
-  if (!fontsLoaded) return null;
+  useEffect(() => {
+    Asset.loadAsync([require('./assets/bg-initial-page.png')]).finally(() => setAssetsLoaded(true));
+  }, []);
+
+  if (!fontsLoaded || !assetsLoaded) return null;
 
   return (
     <SafeAreaProvider>
-      <AppStateProvider>
-        <Navigation />
-      </AppStateProvider>
+      <ThemeProvider>
+        <AppStateProvider>
+          <Navigation />
+        </AppStateProvider>
+      </ThemeProvider>
     </SafeAreaProvider>
   );
 }

@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChevronLeft } from 'lucide-react-native';
-import { colors } from '../theme';
+import { Palette } from '../theme';
+import { useTheme } from '../ThemeContext';
 import FloatingBlobs from './FloatingBlobs';
 
 const TOTAL_STEPS = 5;
@@ -14,14 +15,16 @@ type Props = {
 };
 
 export default function OnboardingLayout({ step, onBack, children }: Props) {
+  const { colors, dark } = useTheme();
+  const s = makeStyles(colors);
   return (
     <View style={s.root}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle={dark ? 'light-content' : 'dark-content'} />
       <FloatingBlobs />
       <SafeAreaView style={s.safe}>
         <View style={s.header}>
           <TouchableOpacity style={s.backBtn} onPress={onBack} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}>
-            <ChevronLeft size={24} color={colors.azulEscuro} />
+            <ChevronLeft size={24} color={colors.textoPrimario} />
           </TouchableOpacity>
 
           <View style={s.progress}>
@@ -39,8 +42,8 @@ export default function OnboardingLayout({ step, onBack, children }: Props) {
   );
 }
 
-const s = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#F7F9FC' },
+const makeStyles = (colors: Palette) => StyleSheet.create({
+  root: { flex: 1, backgroundColor: colors.fundo },
   safe: { flex: 1 },
   header: {
     flexDirection: 'row',
@@ -54,7 +57,7 @@ const s = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: colors.branco,
+    backgroundColor: colors.card,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: colors.azulEscuro,
@@ -67,6 +70,6 @@ const s = StyleSheet.create({
   progress: { flexDirection: 'row', gap: 6, alignItems: 'center' },
   dot: { height: 6, borderRadius: 3 },
   dotAtivo: { width: 22, backgroundColor: colors.azulClaro },
-  dotInativo: { width: 6, backgroundColor: '#D5DEEA' },
+  dotInativo: { width: 6, backgroundColor: colors.borda },
   content: { flex: 1, paddingHorizontal: 28 },
 });

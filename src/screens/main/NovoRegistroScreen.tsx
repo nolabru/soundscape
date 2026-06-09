@@ -4,7 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { X, Save } from 'lucide-react-native';
 import { supabase } from '../../lib/supabase';
-import { colors, fonts } from '../../theme';
+import { fonts, Palette } from '../../theme';
+import { useTheme } from '../../ThemeContext';
 import { HUMOR_ICONS, humorCor } from '../../humor';
 
 const LOCAIS = ['Casa', 'Escola', 'Transporte', 'Trabalho', 'Shopping', 'Outro'];
@@ -13,6 +14,8 @@ const HORARIOS = ['Madrugada', 'Manhã', 'Tarde', 'Noite'];
 function hoje() { return new Date().toISOString().split('T')[0]; }
 
 export default function NovoRegistroScreen() {
+  const { colors } = useTheme();
+  const s = makeStyles(colors);
   const navigation = useNavigation<any>();
   const [humor, setHumor] = useState<number | null>(null);
   const [crises, setCrises] = useState('0');
@@ -106,7 +109,7 @@ export default function NovoRegistroScreen() {
   );
 }
 
-const s = StyleSheet.create({
+const makeStyles = (colors: Palette) => StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.fundo },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 12, paddingBottom: 8 },
   title: { fontFamily: fonts.bold, fontSize: 24, color: colors.textoPrimario },

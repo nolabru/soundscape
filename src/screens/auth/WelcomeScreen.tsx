@@ -35,7 +35,7 @@ export default function WelcomeScreen({ navigation }: any) {
 }
 
 const s = StyleSheet.create({
-  bg: { flex: 1 },
+  bg: { flex: 1, backgroundColor: '#34537A' },
   safe: { flex: 1, justifyContent: 'space-between' },
   top: { marginTop: 80, paddingHorizontal: 32, alignItems: 'center' },
   title: {

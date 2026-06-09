@@ -3,9 +3,12 @@ import { View, Text, TextInput, StyleSheet, Alert, KeyboardAvoidingView, Platfor
 import AuthLayout from '../../components/AuthLayout';
 import PrimaryButton from '../../components/PrimaryButton';
 import { supabase } from '../../lib/supabase';
-import { colors, fonts } from '../../theme';
+import { fonts, Palette } from '../../theme';
+import { useTheme } from '../../ThemeContext';
 
 export default function CadastroScreen({ navigation, route }: any) {
+  const { colors } = useTheme();
+  const s = makeStyles(colors);
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [loading, setLoading] = useState(false);
@@ -64,7 +67,7 @@ export default function CadastroScreen({ navigation, route }: any) {
   );
 }
 
-const s = StyleSheet.create({
+const makeStyles = (colors: Palette) => StyleSheet.create({
   flex: { flex: 1 },
   body: { flex: 1, justifyContent: 'center' },
   title: { fontFamily: fonts.bold, fontSize: 28, color: colors.textoPrimario, marginBottom: 10 },
@@ -72,8 +75,8 @@ const s = StyleSheet.create({
   label: { fontFamily: fonts.semibold, fontSize: 13, color: colors.textoPrimario, marginBottom: 8, marginTop: 16 },
   input: {
     fontFamily: fonts.regular, fontSize: 16, color: colors.textoPrimario,
-    backgroundColor: colors.branco, borderRadius: 14, paddingHorizontal: 18, paddingVertical: 16,
-    borderWidth: 1, borderColor: '#E2E8F2',
+    backgroundColor: colors.card, borderRadius: 14, paddingHorizontal: 18, paddingVertical: 16,
+    borderWidth: 1, borderColor: colors.borda,
   },
   footer: { paddingBottom: 16, paddingTop: 8 },
 });

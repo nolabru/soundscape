@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, Easing, DimensionValue, ViewStyle } from 'react-native';
-import { colors } from '../theme';
+import { useTheme } from '../ThemeContext';
 
 type Props = {
   width?: DimensionValue;
@@ -10,6 +10,7 @@ type Props = {
 };
 
 export default function Skeleton({ width = '100%', height, radius = 12, style }: Props) {
+  const { colors } = useTheme();
   const opacity = useRef(new Animated.Value(0.5)).current;
 
   useEffect(() => {
@@ -25,7 +26,7 @@ export default function Skeleton({ width = '100%', height, radius = 12, style }:
 
   return (
     <Animated.View
-      style={[{ width, height, borderRadius: radius, backgroundColor: '#E4EAF2', opacity }, style]}
+      style={[{ width, height, borderRadius: radius, backgroundColor: colors.skeleton, opacity }, style]}
     />
   );
 }

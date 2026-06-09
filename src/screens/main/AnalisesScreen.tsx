@@ -4,11 +4,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { FileText, Clock, MapPin, TrendingUp, HeartPulse, CalendarCheck, Smile } from 'lucide-react-native';
 import { supabase } from '../../lib/supabase';
-import { colors, fonts } from '../../theme';
+import { fonts, Palette } from '../../theme';
+import { useTheme } from '../../ThemeContext';
 import { humorCor } from '../../humor';
 import Skeleton from '../../components/Skeleton';
 
 export default function AnalisesScreen() {
+  const { colors } = useTheme();
+  const s = makeStyles(colors);
   const [entries, setEntries] = useState<any[]>([]);
   const [carregando, setCarregando] = useState(true);
 
@@ -143,7 +146,7 @@ export default function AnalisesScreen() {
   );
 }
 
-const s = StyleSheet.create({
+const makeStyles = (colors: Palette) => StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.fundo },
   scroll: { paddingHorizontal: 20, paddingBottom: 130 },
   header: { paddingTop: 12, marginBottom: 18 },

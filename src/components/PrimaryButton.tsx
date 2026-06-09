@@ -1,7 +1,8 @@
 import React from 'react';
 import { Text, TouchableOpacity, StyleSheet, ViewStyle } from 'react-native';
 import { ArrowRight } from 'lucide-react-native';
-import { colors, fonts } from '../theme';
+import { fonts, Palette } from '../theme';
+import { useTheme } from '../ThemeContext';
 
 type Props = {
   label: string;
@@ -12,6 +13,8 @@ type Props = {
 };
 
 export default function PrimaryButton({ label, onPress, disabled, showArrow = true, style }: Props) {
+  const { colors } = useTheme();
+  const s = makeStyles(colors);
   return (
     <TouchableOpacity
       style={[s.btn, disabled && s.btnDisabled, style]}
@@ -25,7 +28,7 @@ export default function PrimaryButton({ label, onPress, disabled, showArrow = tr
   );
 }
 
-const s = StyleSheet.create({
+const makeStyles = (colors: Palette) => StyleSheet.create({
   btn: {
     flexDirection: 'row',
     alignItems: 'center',

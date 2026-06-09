@@ -2,15 +2,18 @@ import React, { useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, Switch, Alert, Image, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { User, ShieldCheck, LogOut, Pencil, X, Camera, Music4, ChevronRight } from 'lucide-react-native';
+import { User, ShieldCheck, LogOut, Pencil, X, Camera, Music4, ChevronRight, Moon } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { decode } from 'base64-arraybuffer';
 import { supabase } from '../../lib/supabase';
-import { colors, fonts } from '../../theme';
+import { fonts, Palette } from '../../theme';
+import { useTheme } from '../../ThemeContext';
 import { getSom } from '../../sons';
 import Skeleton from '../../components/Skeleton';
 
 export default function ConfiguracoesScreen() {
+  const { colors, dark, setDark } = useTheme();
+  const s = makeStyles(colors);
   const navigation = useNavigation<any>();
   const [profile, setProfile] = useState<any>(null);
   const [nome, setNome] = useState('');
@@ -172,6 +175,16 @@ export default function ConfiguracoesScreen() {
               </View>
             </>
           )}
+
+          <View style={s.divider} />
+          <View style={s.row}>
+            <View style={s.rowIcon}><Moon size={20} color={colors.azulClaro} /></View>
+            <View style={s.rowInfo}>
+              <Text style={s.rowTitle}>Modo escuro</Text>
+              <Text style={s.rowSub}>Tema escuro em todo o app</Text>
+            </View>
+            <Switch value={dark} onValueChange={setDark} trackColor={{ true: colors.azulClaro, false: colors.borda }} thumbColor={colors.branco} />
+          </View>
         </View>
 
         {editando ? (
@@ -190,7 +203,7 @@ export default function ConfiguracoesScreen() {
   );
 }
 
-const s = StyleSheet.create({
+const makeStyles = (colors: Palette) => StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.fundo },
   topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 12, paddingBottom: 4 },
   topTitle: { fontFamily: fonts.bold, fontSize: 26, color: colors.textoPrimario },

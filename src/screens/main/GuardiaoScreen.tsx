@@ -6,7 +6,8 @@ import Svg, { Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
 import Slider from '@react-native-community/slider';
 import { ChevronLeft, ShieldCheck, ShieldAlert, MicOff } from 'lucide-react-native';
 import { supabase } from '../../lib/supabase';
-import { colors, fonts } from '../../theme';
+import { fonts, Palette } from '../../theme';
+import { useTheme } from '../../ThemeContext';
 import { useMicLevel } from '../../hooks/useMicLevel';
 import { useAppState } from '../../AppState';
 
@@ -19,6 +20,8 @@ const C = 2 * Math.PI * R;
 const MAX_DB = 120;
 
 export default function GuardiaoScreen() {
+  const { colors } = useTheme();
+  const s = makeStyles(colors);
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const onboarding: boolean = route.params?.onboarding ?? false;
@@ -152,7 +155,7 @@ export default function GuardiaoScreen() {
               <Text style={s.rowTitle}>Monitoramento Ambiental</Text>
               <Text style={s.rowSub}>Processamento 100% local — sem gravar vozes</Text>
             </View>
-            <Switch value={monitorando} onValueChange={setMonitorando} trackColor={{ true: colors.azulClaro, false: '#D5DEEA' }} thumbColor={colors.branco} />
+            <Switch value={monitorando} onValueChange={setMonitorando} trackColor={{ true: colors.azulClaro, false: colors.borda }} thumbColor={colors.branco} />
           </View>
 
           <View style={s.divider} />
@@ -162,7 +165,7 @@ export default function GuardiaoScreen() {
               <Text style={s.rowTitle}>Intervenção com Fade-in</Text>
               <Text style={s.rowSub}>O refúgio entra suave, sem susto</Text>
             </View>
-            <Switch value={fadeIn} onValueChange={setFadeIn} trackColor={{ true: colors.azulClaro, false: '#D5DEEA' }} thumbColor={colors.branco} />
+            <Switch value={fadeIn} onValueChange={setFadeIn} trackColor={{ true: colors.azulClaro, false: colors.borda }} thumbColor={colors.branco} />
           </View>
 
           <View style={s.divider} />
@@ -190,7 +193,7 @@ export default function GuardiaoScreen() {
   );
 }
 
-const s = StyleSheet.create({
+const makeStyles = (colors: Palette) => StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.fundo },
   safe: { flex: 1, paddingHorizontal: 24 },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 8 },

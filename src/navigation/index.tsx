@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import LoadingScreen from '../components/LoadingScreen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
+import { useTheme } from '../ThemeContext';
 
 import WelcomeScreen from '../screens/auth/WelcomeScreen';
 import LoginScreen from '../screens/auth/LoginScreen';
@@ -14,6 +15,7 @@ import NecessidadesScreen from '../screens/onboarding/NecessidadesScreen';
 import RedeApoioScreen from '../screens/onboarding/RedeApoioScreen';
 import PermissoesScreen from '../screens/onboarding/PermissoesScreen';
 import TesteRefugioScreen from '../screens/onboarding/TesteRefugioScreen';
+import ConclusaoScreen from '../screens/onboarding/ConclusaoScreen';
 import MainTabs from './MainTabs';
 import NovoRegistroScreen from '../screens/main/NovoRegistroScreen';
 import PlayerScreen from '../screens/main/PlayerScreen';
@@ -24,9 +26,22 @@ import EMAScreen from '../screens/modals/EMAScreen';
 const Stack = createNativeStackNavigator();
 
 export default function Navigation() {
+  const { colors, dark } = useTheme();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [onboardingDone, setOnboardingDone] = useState(false);
+
+  const navTheme = {
+    ...(dark ? DarkTheme : DefaultTheme),
+    colors: {
+      ...(dark ? DarkTheme : DefaultTheme).colors,
+      background: colors.fundo,
+      card: colors.card,
+      text: colors.textoPrimario,
+      border: colors.borda,
+      primary: colors.azulClaro,
+    },
+  };
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -71,8 +86,8 @@ export default function Navigation() {
 
   return (
     <SafeAreaProvider>
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <NavigationContainer theme={navTheme}>
+      <Stack.Navigator screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.fundo } }}>
         {!session ? (
           <>
             <Stack.Screen name="Welcome" component={WelcomeScreen} />
@@ -84,6 +99,7 @@ export default function Navigation() {
             <Stack.Screen name="Permissoes" component={PermissoesScreen} />
             <Stack.Screen name="Guardiao" component={GuardiaoScreen} />
             <Stack.Screen name="TesteRefugio" component={TesteRefugioScreen} />
+            <Stack.Screen name="Conclusao" component={ConclusaoScreen} />
           </>
         ) : !onboardingDone ? (
           <>
@@ -93,6 +109,7 @@ export default function Navigation() {
             <Stack.Screen name="Permissoes" component={PermissoesScreen} />
             <Stack.Screen name="Guardiao" component={GuardiaoScreen} />
             <Stack.Screen name="TesteRefugio" component={TesteRefugioScreen} />
+            <Stack.Screen name="Conclusao" component={ConclusaoScreen} />
           </>
         ) : (
           <>

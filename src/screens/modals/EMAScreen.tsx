@@ -4,7 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { X, Volume2, Sun, Users, Flower2, Hand, Zap, LucideIcon } from 'lucide-react-native';
 import { supabase } from '../../lib/supabase';
-import { colors, fonts } from '../../theme';
+import { fonts, Palette } from '../../theme';
+import { useTheme } from '../../ThemeContext';
 import { HUMOR_ICONS, humorCor } from '../../humor';
 
 const GATILHOS: { label: string; Icon: LucideIcon }[] = [
@@ -18,6 +19,8 @@ const GATILHOS: { label: string; Icon: LucideIcon }[] = [
 const LOCAIS = ['Casa', 'Escola', 'Transporte', 'Trabalho', 'Shopping', 'Outro'];
 
 export default function EMAScreen() {
+  const { colors } = useTheme();
+  const s = makeStyles(colors);
   const [intensidade, setIntensidade] = useState<number | null>(null);
   const [duracao, setDuracao] = useState('');
   const [gatilhos, setGatilhos] = useState<string[]>([]);
@@ -107,7 +110,7 @@ export default function EMAScreen() {
   );
 }
 
-const s = StyleSheet.create({
+const makeStyles = (colors: Palette) => StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.fundo },
   header: { flexDirection: 'row', alignItems: 'flex-start', paddingHorizontal: 20, paddingTop: 12, paddingBottom: 8 },
   title: { fontFamily: fonts.bold, fontSize: 24, color: colors.textoPrimario },

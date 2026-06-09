@@ -30,13 +30,24 @@
     "plugins": [
       "expo-font",
       [
+        "expo-av",
+        {
+          "microphonePermission": "O Guardião usa o microfone apenas para medir o volume do ambiente — nenhuma voz é gravada."
+        }
+      ],
+      [
         "expo-image-picker",
-        { "photosPermission": "Permita o acesso às fotos para definir seu avatar." }
+        {
+          "photosPermission": "Permita o acesso às fotos para definir seu avatar."
+        }
       ],
       [
         "expo-location",
-        { "locationWhenInUsePermission": "Usado para enviar sua localização ao contato de emergência durante uma crise." }
-      ]
+        {
+          "locationWhenInUsePermission": "Usado para enviar sua localização ao contato de emergência durante uma crise."
+        }
+      ],
+      "react-native-audio-api"
     ]
   }
 }

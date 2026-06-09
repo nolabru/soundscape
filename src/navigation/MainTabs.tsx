@@ -2,7 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import TabBar from '../components/TabBar';
 import GuardiaoMonitor from '../components/GuardiaoMonitor';
-import { colors } from '../theme';
+import { useTheme } from '../ThemeContext';
 import MixerScreen from '../screens/main/MixerScreen';
 import DiarioScreen from '../screens/main/DiarioScreen';
 import AnalisesScreen from '../screens/main/AnalisesScreen';
@@ -11,6 +11,7 @@ import ConfiguracoesScreen from '../screens/main/ConfiguracoesScreen';
 const Tab = createBottomTabNavigator();
 
 export default function MainTabs() {
+  const { colors } = useTheme();
   return (
     <>
       <Tab.Navigator

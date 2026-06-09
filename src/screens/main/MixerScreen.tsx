@@ -4,7 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { Play, BookmarkCheck } from 'lucide-react-native';
 import { supabase } from '../../lib/supabase';
-import { colors, fonts } from '../../theme';
+import { fonts, Palette } from '../../theme';
+import { useTheme } from '../../ThemeContext';
 import { SONS_NATUREZA, RUIDOS, TODOS_SONS, getSom } from '../../sons';
 import Skeleton from '../../components/Skeleton';
 
@@ -15,6 +16,8 @@ const CATEGORIAS = [
 ];
 
 export default function MixerScreen() {
+  const { colors } = useTheme();
+  const s = makeStyles(colors);
   const navigation = useNavigation<any>();
   const [somRefugio, setSomRefugio] = useState<string | null>(null);
   const [nome, setNome] = useState('');
@@ -99,7 +102,7 @@ export default function MixerScreen() {
   );
 }
 
-const s = StyleSheet.create({
+const makeStyles = (colors: Palette) => StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.fundo },
   scroll: { paddingHorizontal: 20, paddingBottom: 130 },
   header: { paddingTop: 12, marginBottom: 20 },
@@ -107,7 +110,7 @@ const s = StyleSheet.create({
   title: { fontFamily: fonts.bold, fontSize: 26, color: colors.textoPrimario, lineHeight: 33 },
 
   featured: {
-    flexDirection: 'row', alignItems: 'center', backgroundColor: colors.azulEscuro,
+    flexDirection: 'row', alignItems: 'center', backgroundColor: colors.destaque,
     borderRadius: 20, padding: 16, marginBottom: 22,
   },
   featuredIcon: {
@@ -115,7 +118,7 @@ const s = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center', marginRight: 14,
   },
   featuredInfo: { flex: 1 },
-  featuredTag: { fontFamily: fonts.semibold, fontSize: 10, color: colors.azulClaro, letterSpacing: 1, marginBottom: 4 },
+  featuredTag: { fontFamily: fonts.bold, fontSize: 11, color: '#A9CCEE', letterSpacing: 1.2, marginBottom: 4 },
   featuredLabel: { fontFamily: fonts.bold, fontSize: 17, color: colors.branco },
   featuredPlay: {
     width: 44, height: 44, borderRadius: 22, backgroundColor: colors.branco,

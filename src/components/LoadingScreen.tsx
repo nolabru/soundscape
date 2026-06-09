@@ -1,9 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated, Easing } from 'react-native';
-import { colors, fonts } from '../theme';
+import { fonts, Palette } from '../theme';
+import { useTheme } from '../ThemeContext';
 import FloatingBlobs from './FloatingBlobs';
 
 export default function LoadingScreen() {
+  const { colors } = useTheme();
+  const s = makeStyles(colors);
   const pulse = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -36,8 +39,8 @@ export default function LoadingScreen() {
   );
 }
 
-const s = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#F7F9FC' },
+const makeStyles = (colors: Palette) => StyleSheet.create({
+  root: { flex: 1, backgroundColor: colors.fundo },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   dotWrap: { width: 80, height: 80, alignItems: 'center', justifyContent: 'center' },
   halo: { position: 'absolute', width: 40, height: 40, borderRadius: 20, backgroundColor: colors.azulClaro },

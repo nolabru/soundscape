@@ -4,11 +4,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { Trash2, Plus, NotebookPen } from 'lucide-react-native';
 import { supabase } from '../../lib/supabase';
-import { colors, fonts } from '../../theme';
+import { fonts, Palette } from '../../theme';
+import { useTheme } from '../../ThemeContext';
 import { humorIcon, humorCor } from '../../humor';
 import Skeleton from '../../components/Skeleton';
 
 export default function DiarioScreen() {
+  const { colors } = useTheme();
+  const s = makeStyles(colors);
   const navigation = useNavigation<any>();
   const [entries, setEntries] = useState<any[]>([]);
   const [carregando, setCarregando] = useState(true);
@@ -100,7 +103,7 @@ export default function DiarioScreen() {
   );
 }
 
-const s = StyleSheet.create({
+const makeStyles = (colors: Palette) => StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.fundo },
   header: { paddingHorizontal: 20, paddingTop: 12, marginBottom: 14 },
   title: { fontFamily: fonts.bold, fontSize: 26, color: colors.textoPrimario },

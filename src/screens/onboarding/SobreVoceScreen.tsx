@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import OnboardingLayout from '../../components/OnboardingLayout';
 import PrimaryButton from '../../components/PrimaryButton';
-import { colors, fonts } from '../../theme';
+import { fonts, Palette } from '../../theme';
+import { useTheme } from '../../ThemeContext';
 
 export default function SobreVoceScreen({ navigation, route }: any) {
+  const { colors } = useTheme();
+  const s = makeStyles(colors);
   const [nome, setNome] = useState('');
   const prev = route?.params?.onboardingData ?? {};
 
@@ -36,15 +39,15 @@ export default function SobreVoceScreen({ navigation, route }: any) {
   );
 }
 
-const s = StyleSheet.create({
+const makeStyles = (colors: Palette) => StyleSheet.create({
   flex: { flex: 1 },
   body: { flex: 1, justifyContent: 'center' },
   title: { fontFamily: fonts.bold, fontSize: 26, color: colors.textoPrimario, lineHeight: 34, marginBottom: 10 },
   sub: { fontFamily: fonts.regular, fontSize: 15, color: colors.textoSecundario, marginBottom: 32 },
   input: {
     fontFamily: fonts.regular, fontSize: 16, color: colors.textoPrimario,
-    backgroundColor: colors.branco, borderRadius: 14, paddingHorizontal: 18, paddingVertical: 16,
-    borderWidth: 1, borderColor: '#E2E8F2',
+    backgroundColor: colors.card, borderRadius: 14, paddingHorizontal: 18, paddingVertical: 16,
+    borderWidth: 1, borderColor: colors.borda,
   },
   footer: { paddingBottom: 16 },
 });

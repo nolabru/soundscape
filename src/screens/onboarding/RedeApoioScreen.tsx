@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Switch, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import OnboardingLayout from '../../components/OnboardingLayout';
 import PrimaryButton from '../../components/PrimaryButton';
-import { colors, fonts } from '../../theme';
+import { fonts, Palette } from '../../theme';
+import { useTheme } from '../../ThemeContext';
 
 export default function RedeApoioScreen({ navigation, route }: any) {
+  const { colors } = useTheme();
+  const s = makeStyles(colors);
   const [nome, setNome] = useState('');
   const [tel, setTel] = useState('');
   const [avisarEmCrise, setAvisarEmCrise] = useState(true);
@@ -38,12 +41,12 @@ export default function RedeApoioScreen({ navigation, route }: any) {
 
           <View style={s.switchRow}>
             <Text style={s.switchLabel}>Avisar esta pessoa quando eu estiver em crise</Text>
-            <Switch value={avisarEmCrise} onValueChange={setAvisarEmCrise} trackColor={{ true: colors.azulClaro, false: '#D5DEEA' }} thumbColor={colors.branco} />
+            <Switch value={avisarEmCrise} onValueChange={setAvisarEmCrise} trackColor={{ true: colors.azulClaro, false: colors.borda }} thumbColor={colors.branco} />
           </View>
 
           <View style={s.switchRow}>
             <Text style={s.switchLabel}>Já tenho acompanhamento psicológico</Text>
-            <Switch value={temPsicologo} onValueChange={setTemPsicologo} trackColor={{ true: colors.azulClaro, false: '#D5DEEA' }} thumbColor={colors.branco} />
+            <Switch value={temPsicologo} onValueChange={setTemPsicologo} trackColor={{ true: colors.azulClaro, false: colors.borda }} thumbColor={colors.branco} />
           </View>
         </ScrollView>
 
@@ -55,7 +58,7 @@ export default function RedeApoioScreen({ navigation, route }: any) {
   );
 }
 
-const s = StyleSheet.create({
+const makeStyles = (colors: Palette) => StyleSheet.create({
   flex: { flex: 1 },
   scrollContent: { flexGrow: 1, justifyContent: 'center', paddingVertical: 16 },
   title: { fontFamily: fonts.bold, fontSize: 26, color: colors.textoPrimario, marginBottom: 10 },
@@ -63,13 +66,13 @@ const s = StyleSheet.create({
   label: { fontFamily: fonts.semibold, fontSize: 13, color: colors.textoPrimario, marginBottom: 8, marginTop: 16 },
   input: {
     fontFamily: fonts.regular, fontSize: 16, color: colors.textoPrimario,
-    backgroundColor: colors.branco, borderRadius: 14, paddingHorizontal: 18, paddingVertical: 16,
-    borderWidth: 1, borderColor: '#E2E8F2',
+    backgroundColor: colors.card, borderRadius: 14, paddingHorizontal: 18, paddingVertical: 16,
+    borderWidth: 1, borderColor: colors.borda,
   },
   switchRow: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    marginTop: 14, backgroundColor: colors.branco, borderRadius: 14, padding: 16,
-    borderWidth: 1, borderColor: '#E2E8F2',
+    marginTop: 14, backgroundColor: colors.card, borderRadius: 14, padding: 16,
+    borderWidth: 1, borderColor: colors.borda,
   },
   switchLabel: { fontFamily: fonts.medium, fontSize: 14, color: colors.textoPrimario, flex: 1, marginRight: 12 },
   footer: { paddingBottom: 16, paddingTop: 8 },

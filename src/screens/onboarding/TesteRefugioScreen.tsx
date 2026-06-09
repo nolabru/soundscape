@@ -3,7 +3,8 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-nati
 import { CloudRain, Waves, Trees, Radio, Music, Check } from 'lucide-react-native';
 import OnboardingLayout from '../../components/OnboardingLayout';
 import PrimaryButton from '../../components/PrimaryButton';
-import { colors, fonts } from '../../theme';
+import { fonts, Palette } from '../../theme';
+import { useTheme } from '../../ThemeContext';
 
 const SONS = [
   { id: 'chuva', label: 'Chuva Suave', desc: 'Som contínuo e suave de chuva', Icon: CloudRain },
@@ -14,12 +15,14 @@ const SONS = [
 ];
 
 export default function TesteRefugioScreen({ navigation, route }: any) {
+  const { colors } = useTheme();
+  const s = makeStyles(colors);
   const [escolhido, setEscolhido] = useState<string | null>(null);
   const prev = route?.params?.onboardingData ?? {};
 
   function concluir() {
     if (!escolhido) return;
-    navigation.navigate('Cadastro', { onboardingData: { ...prev, som_refugio: escolhido } });
+    navigation.navigate('Conclusao', { onboardingData: { ...prev, som_refugio: escolhido } });
   }
 
   return (
@@ -58,7 +61,7 @@ export default function TesteRefugioScreen({ navigation, route }: any) {
   );
 }
 
-const s = StyleSheet.create({
+const makeStyles = (colors: Palette) => StyleSheet.create({
   body: { flex: 1 },
   title: { fontFamily: fonts.bold, fontSize: 26, color: colors.textoPrimario, marginBottom: 10 },
   sub: { fontFamily: fonts.regular, fontSize: 15, color: colors.textoSecundario, marginBottom: 24, lineHeight: 22 },
@@ -66,7 +69,7 @@ const s = StyleSheet.create({
   scrollContent: { flexGrow: 1, justifyContent: 'center', paddingVertical: 16 },
   card: {
     flexDirection: 'row', alignItems: 'center', padding: 14, borderRadius: 16,
-    backgroundColor: colors.branco, borderWidth: 1, borderColor: '#E2E8F2', marginBottom: 12,
+    backgroundColor: colors.card, borderWidth: 1, borderColor: colors.borda, marginBottom: 12,
   },
   cardAtivo: { borderColor: colors.azulEscuro, backgroundColor: '#F4F8FD' },
   cardIcon: {

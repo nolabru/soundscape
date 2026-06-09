@@ -5,9 +5,12 @@ import * as Notifications from 'expo-notifications';
 import { MicOff, MapPin } from 'lucide-react-native';
 import OnboardingLayout from '../../components/OnboardingLayout';
 import PrimaryButton from '../../components/PrimaryButton';
-import { colors, fonts } from '../../theme';
+import { fonts, Palette } from '../../theme';
+import { useTheme } from '../../ThemeContext';
 
 export default function PermissoesScreen({ navigation, route }: any) {
+  const { colors } = useTheme();
+  const s = makeStyles(colors);
   const prev = route?.params?.onboardingData ?? {};
 
   async function ativar() {
@@ -53,11 +56,11 @@ export default function PermissoesScreen({ navigation, route }: any) {
   );
 }
 
-const s = StyleSheet.create({
+const makeStyles = (colors: Palette) => StyleSheet.create({
   body: { flex: 1, justifyContent: 'center' },
   title: { fontFamily: fonts.bold, fontSize: 26, color: colors.textoPrimario, marginBottom: 10 },
   sub: { fontFamily: fonts.regular, fontSize: 15, color: colors.textoSecundario, marginBottom: 28 },
-  card: { backgroundColor: colors.branco, borderRadius: 18, padding: 20, borderWidth: 1, borderColor: '#E2E8F2' },
+  card: { backgroundColor: colors.card, borderRadius: 18, padding: 20, borderWidth: 1, borderColor: colors.borda },
   featureRow: { flexDirection: 'row', alignItems: 'flex-start' },
   featureIcon: {
     width: 40, height: 40, borderRadius: 20, backgroundColor: '#EAF1FA',

@@ -2,11 +2,14 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import OnboardingLayout from '../../components/OnboardingLayout';
 import PrimaryButton from '../../components/PrimaryButton';
-import { colors, fonts } from '../../theme';
+import { fonts, Palette } from '../../theme';
+import { useTheme } from '../../ThemeContext';
 
 const LOCAIS = ['Escola', 'Transporte público', 'Shopping', 'Trabalho', 'Casa', 'Restaurante', 'Hospital', 'Outro'];
 
 export default function NecessidadesScreen({ navigation, route }: any) {
+  const { colors } = useTheme();
+  const s = makeStyles(colors);
   const [selecionados, setSelecionados] = useState<string[]>([]);
   const prev = route?.params?.onboardingData ?? {};
 
@@ -42,14 +45,14 @@ export default function NecessidadesScreen({ navigation, route }: any) {
   );
 }
 
-const s = StyleSheet.create({
+const makeStyles = (colors: Palette) => StyleSheet.create({
   body: { flex: 1, justifyContent: 'center' },
   title: { fontFamily: fonts.bold, fontSize: 26, color: colors.textoPrimario, lineHeight: 34, marginBottom: 10 },
   sub: { fontFamily: fonts.regular, fontSize: 15, color: colors.textoSecundario, marginBottom: 24 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   chip: {
     paddingVertical: 12, paddingHorizontal: 18, borderRadius: 24,
-    backgroundColor: colors.branco, borderWidth: 1, borderColor: '#E2E8F2',
+    backgroundColor: colors.card, borderWidth: 1, borderColor: colors.borda,
   },
   chipAtivo: { backgroundColor: colors.azulEscuro, borderColor: colors.azulEscuro },
   chipText: { fontFamily: fonts.medium, fontSize: 14, color: colors.textoSecundario },

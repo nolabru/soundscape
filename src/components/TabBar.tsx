@@ -3,7 +3,8 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { Waves, NotebookPen, ChartColumn, User, Siren, LucideIcon } from 'lucide-react-native';
-import { colors, fonts } from '../theme';
+import { fonts, Palette } from '../theme';
+import { useTheme } from '../ThemeContext';
 
 const ICONS: Record<string, LucideIcon> = {
   Mixer: Waves,
@@ -21,6 +22,8 @@ const LABELS: Record<string, string> = {
 
 export default function TabBar({ state, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
+  const { colors } = useTheme();
+  const s = makeStyles(colors);
 
   function renderTab(route: BottomTabBarProps['state']['routes'][number], index: number) {
     const focused = state.index === index;
@@ -33,7 +36,7 @@ export default function TabBar({ state, navigation }: BottomTabBarProps) {
 
     return (
       <TouchableOpacity key={route.key} style={[s.tab, focused && s.tabActive]} onPress={onPress} activeOpacity={0.8}>
-        <Icon size={21} color={focused ? colors.azulEscuro : '#9AA8BD'} />
+        <Icon size={21} color={focused ? colors.azulEscuro : colors.textoSecundario} />
         {focused && <Text style={s.label}>{LABELS[route.name]}</Text>}
       </TouchableOpacity>
     );
@@ -56,7 +59,7 @@ export default function TabBar({ state, navigation }: BottomTabBarProps) {
   );
 }
 
-const s = StyleSheet.create({
+const makeStyles = (colors: Palette) => StyleSheet.create({
   wrap: {
     position: 'absolute',
     left: 0, right: 0, bottom: 0,
@@ -65,7 +68,7 @@ const s = StyleSheet.create({
   pill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.branco,
+    backgroundColor: colors.card,
     borderRadius: 30,
     paddingHorizontal: 8,
     paddingVertical: 8,
